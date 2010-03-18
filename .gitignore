@@ -1,0 +1,5 @@
+pom-generated.xml
+Manifest.txt
+tika.jar
+lib/*.jar
+*~
