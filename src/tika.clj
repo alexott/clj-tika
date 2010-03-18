@@ -7,11 +7,10 @@
   (:import (org.apache.tika.sax BodyContentHandler))
   )
 
-(defn conv-metadata [#^Metadata mdata]
+(defn- conv-metadata [#^Metadata mdata]
   (let [names (.names mdata)]
     (zipmap (map #(keyword (.toLowerCase %1)) names)
             (map #(seq (.getValues mdata %1)) names))))
-
 
 (defn parse-stream
   "Parses Tika-supported stream"
@@ -30,5 +29,5 @@
 
 (defn parse-file
   "Parses Tika-supported file"
-  [#^File file]
-  (parse-stream (new FileInputStream file)))
+  [#^String filename]
+  (parse-stream (new FileInputStream (File. filename))))
