@@ -5,6 +5,7 @@ Clojure interface to Apache Tika project functions
 ## Usage
 
 This package provides several functions in the `tika` package:
+
 * `parse` - parses given file or stream and returns map with meta-information & text
    extracted from file.  Text is stored under key `:text`
 * `detect-mime-type` - performs detection of mime type of given file or stream. Returns
