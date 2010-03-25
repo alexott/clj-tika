@@ -4,6 +4,7 @@
   (:import (java.io InputStream File FileInputStream))
   (:import (java.net URL))
   (:import (org.apache.tika.parser Parser AutoDetectParser ParseContext))
+  (:import (org.apache.tika.language LanguageIdentifier))
   (:import (org.apache.tika.metadata Metadata))
   (:import (org.apache.tika Tika))
   (:import (org.apache.tika.sax BodyContentHandler))
@@ -16,7 +17,9 @@
     (zipmap (map #(keyword (.toLowerCase %1)) names)
             (map #(seq (.getValues mdata %1)) names))))
 
-(defmulti parse class)
+(defmulti parse
+  "Parses given file or stream, returning map of document's metadata and text (:text key)"
+  class)
 
 (defmethod parse InputStream [ifile]
   (let [parser (new AutoDetectParser)
@@ -35,7 +38,10 @@
   (parse (new FileInputStream file)))
 
 ;;
-(defmulti detect-mime-type class)
+(defmulti detect-mime-type
+  "Detects mime-type of given file or stream"
+  class)
+
 (defmethod detect-mime-type InputStream [ifile]
   (.detect tika-class ifile))
 
@@ -45,3 +51,7 @@
 (defmethod detect-mime-type File [file]
   (.detect tika-class file))
 
+(defn detect-language
+  "Detects language of given text"
+  [#^String text]
+  (.getLanguage (LanguageIdentifier. text)))
