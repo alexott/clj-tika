@@ -25,7 +25,8 @@
     (.close ifile)
     (let [mdata (conv-metadata metadata)
           txt (.toString handler)]
-      {:metadata mdata :text txt})))
+      (assoc mdata :text txt)
+      )))
 
 (defn parse-file
   "Parses Tika-supported file"
