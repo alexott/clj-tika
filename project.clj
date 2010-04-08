@@ -5,5 +5,5 @@
                  [org.apache.tika/tika-parsers "0.7"]
                  ]
   :dev-dependencies [[leiningen/lein-swank "1.2.0-SNAPSHOT"]]
-  :repositories {"apache-releases" "https://repository.apache.org/content/repositories/releases/"}
+  :repositories {"apache-releases" "http://repository.apache.org/content/repositories/releases/"}
   )
