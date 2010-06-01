@@ -4,6 +4,6 @@
                  [org.clojure/clojure-contrib "1.1.0"]
                  [org.apache.tika/tika-parsers "0.7"]
                  ]
-  :dev-dependencies [[leiningen/lein-swank "1.2.0-SNAPSHOT"]]
+  :dev-dependencies [[swank-clojure "1.2.0"]]
   :repositories {"apache-releases" "http://repository.apache.org/content/repositories/releases/"}
   )
