@@ -17,39 +17,45 @@
     (zipmap (map #(keyword (.toLowerCase %1)) names)
             (map #(seq (.getValues mdata %1)) names))))
 
-(defmulti parse
-  "Parses given file or stream, returning map of document's metadata and text (:text key)"
-  class)
+(defprotocol TikaProtocol
+  "Protocol for Tika"
+  (parse [this] "Perform parsing of given object")
+  (detect-mime-type [this] "Detect mime type of object")
+  )
 
-(defmethod parse InputStream [ifile]
-  (let [parser (new AutoDetectParser)
-        context (new ParseContext)
-        metadata (new Metadata)
-        handler (new BodyContentHandler)
-        ]
-    (.set context Parser parser)
-    (.parse parser ifile handler metadata context)
-    (assoc (conv-metadata metadata) :text (.toString handler))))
+(extend-protocol TikaProtocol
+  InputStream
+  (parse [ifile]
+         (let [parser (new AutoDetectParser)
+               context (new ParseContext)
+               metadata (new Metadata)
+               handler (new BodyContentHandler)
+               ]
+           (.set context Parser parser)
+           (.parse parser ifile handler metadata context)
+           (assoc (conv-metadata metadata) :text (.toString handler))))
+  (detect-mime-type [ifile]
+                    (.detect tika-class ifile)))
 
-(defmethod parse String [filename]
-  (parse (FileInputStream. (File. filename))))
+(extend-protocol TikaProtocol
+  File
+  (parse [file]
+         (parse (new FileInputStream file)))
+  (detect-mime-type [file]
+                    (.detect tika-class file)))
 
-(defmethod parse File [file]
-  (parse (new FileInputStream file)))
+(extend-protocol TikaProtocol
+  String
+  (parse [filename]
+         (parse (FileInputStream. (File. filename))))
+  (detect-mime-type [filename]
+                    (.detect tika-class filename)))
 
-;;
-(defmulti detect-mime-type
-  "Detects mime-type of given file or stream"
-  class)
-
-(defmethod detect-mime-type InputStream [ifile]
-  (.detect tika-class ifile))
-
-(defmethod detect-mime-type String [filename]
-  (.detect tika-class filename))
-
-(defmethod detect-mime-type File [file]
-  (.detect tika-class file))
+(extend-protocol TikaProtocol
+  URL
+  (parse [url] (parse (.openStream url)))
+  (detect-mime-type [url]
+                    (.detect tika-class url)))
 
 (defn detect-language
   "Detects language of given text"
