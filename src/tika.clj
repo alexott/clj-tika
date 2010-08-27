@@ -1,5 +1,4 @@
 ;; Clojure Interface to Apache Tika library
-;; TODO: add functions for java.net.URL class
 (ns tika
   (:import (java.io InputStream File FileInputStream))
   (:import (java.net URL))
@@ -8,7 +7,10 @@
   (:import (org.apache.tika.metadata Metadata))
   (:import (org.apache.tika Tika))
   (:import (org.apache.tika.sax BodyContentHandler))
+  (:use [clojure.java.io :only [input-stream]])
   )
+
+;; TODO: add separate function to extract only meta-data
 
 (def #^{:private true} tika-class (Tika.))
 
@@ -18,14 +20,14 @@
             (map #(seq (.getValues mdata %1)) names))))
 
 (defprotocol TikaProtocol
-  "Protocol for Tika"
-  (parse [this] "Perform parsing of given object")
-  (detect-mime-type [this] "Detect mime type of object")
+  "Protocol for Tika library"
+  (parse [this] "Performs parsing of given object")
+  (detect-mime-type [this] "Detects mime-type of given object")
   )
 
 (extend-protocol TikaProtocol
   InputStream
-  (parse [ifile]
+  (parse [^InputStream ifile]
          (let [parser (new AutoDetectParser)
                context (new ParseContext)
                metadata (new Metadata)
@@ -34,30 +36,25 @@
            (.set context Parser parser)
            (.parse parser ifile handler metadata context)
            (assoc (conv-metadata metadata) :text (.toString handler))))
-  (detect-mime-type [ifile]
+  (detect-mime-type [^InputStream ifile]
                     (.detect tika-class ifile)))
 
 (extend-protocol TikaProtocol
-  File
-  (parse [file]
-         (parse (new FileInputStream file)))
-  (detect-mime-type [file]
-                    (.detect tika-class file)))
+  java.io.File
+  (parse [^File file] (parse (input-stream file)))
+  (detect-mime-type [^File file] (.detect tika-class file)))
 
 (extend-protocol TikaProtocol
   String
-  (parse [filename]
-         (parse (FileInputStream. (File. filename))))
-  (detect-mime-type [filename]
-                    (.detect tika-class filename)))
+  (parse [^String filename] (parse (input-stream filename)))
+  (detect-mime-type [^String filename] (.detect tika-class filename)))
 
 (extend-protocol TikaProtocol
   URL
-  (parse [url] (parse (.openStream url)))
-  (detect-mime-type [url]
-                    (.detect tika-class url)))
+  (parse [^URL url] (parse (input-stream url)))
+  (detect-mime-type [^URL url] (.detect tika-class url)))
 
 (defn detect-language
   "Detects language of given text"
-  [#^String text]
+  [^String text]
   (.getLanguage (LanguageIdentifier. text)))
