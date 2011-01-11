@@ -31,7 +31,7 @@
          (let [parser (new AutoDetectParser)
                context (new ParseContext)
                metadata (new Metadata)
-               handler (new BodyContentHandler)
+               handler (new BodyContentHandler -1)
                ]
            (.set context Parser parser)
            (.parse parser ifile handler metadata context)
