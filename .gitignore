@@ -1,5 +1,5 @@
 pom-generated.xml
 Manifest.txt
 clj-tika.jar
-lib/*.jar
+lib/
 *~
