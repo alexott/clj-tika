@@ -3,3 +3,4 @@ Manifest.txt
 clj-tika.jar
 lib/
 *~
+/.lein-failures
