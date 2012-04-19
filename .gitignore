@@ -1,6 +1,7 @@
 pom-generated.xml
 Manifest.txt
-clj-tika.jar
 lib/
 *~
 /.lein-failures
+/*.jar
+/pom.xml
