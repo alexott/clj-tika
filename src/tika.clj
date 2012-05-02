@@ -1,20 +1,21 @@
 ;; Clojure Interface to Apache Tika library
 (ns tika
-  (:import (java.io InputStream File FileInputStream))
-  (:import (java.net URL))
-  (:import (org.apache.tika.parser Parser AutoDetectParser ParseContext))
-  (:import (org.apache.tika.language LanguageIdentifier))
-  (:import (org.apache.tika.metadata Metadata))
-  (:import (org.apache.tika Tika))
-  (:import (org.apache.tika.sax BodyContentHandler))
+  (:import [java.io InputStream File FileInputStream]
+           [java.net URL]
+           [org.apache.tika.parser Parser AutoDetectParser ParseContext]
+           [org.apache.tika.language LanguageIdentifier]
+           [org.apache.tika.metadata Metadata]
+           [org.apache.tika Tika]
+           [org.apache.tika.sax BodyContentHandler]
+           )
   (:use [clojure.java.io :only [input-stream]])
   )
 
 ;; TODO: add separate function to extract only meta-data
 
-(def #^{:private true} tika-class (Tika.))
+(def ^{:private true} tika-class (Tika.))
 
-(defn- conv-metadata [#^Metadata mdata]
+(defn conv-metadata [^Metadata mdata]
   (let [names (.names mdata)]
     (zipmap (map #(keyword (.toLowerCase %1)) names)
             (map #(seq (.getValues mdata %1)) names))))
@@ -28,10 +29,10 @@
 (extend-protocol TikaProtocol
   InputStream
   (parse [^InputStream ifile]
-         (let [parser (new AutoDetectParser)
-               context (new ParseContext)
-               metadata (new Metadata)
-               handler (new BodyContentHandler -1)
+         (let [parser (AutoDetectParser.)
+               context (ParseContext.)
+               metadata (Metadata.)
+               handler (BodyContentHandler. -1)
                ]
            (.set context Parser parser)
            (.parse parser ifile handler metadata context)
