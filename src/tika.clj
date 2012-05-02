@@ -42,17 +42,17 @@
 
 (extend-protocol TikaProtocol
   java.io.File
-  (parse [^File file] (parse (input-stream file)))
+  (parse [^File file] (with-open [is (input-stream file)] (parse is)))
   (detect-mime-type [^File file] (.detect tika-class file)))
 
 (extend-protocol TikaProtocol
   String
-  (parse [^String filename] (parse (input-stream filename)))
+  (parse [^String filename] (with-open [is (input-stream filename)] (parse is)))
   (detect-mime-type [^String filename] (.detect tika-class filename)))
 
 (extend-protocol TikaProtocol
   URL
-  (parse [^URL url] (parse (input-stream url)))
+  (parse [^URL url] (with-open [is (input-stream url)] (parse is)))
   (detect-mime-type [^URL url] (.detect tika-class url)))
 
 (defn detect-language
