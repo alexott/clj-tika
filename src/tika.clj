@@ -7,13 +7,14 @@
            [org.apache.tika.metadata Metadata]
            [org.apache.tika Tika]
            [org.apache.tika.sax BodyContentHandler]
+           [org.apache.tika.io TikaInputStream]
            )
   (:use [clojure.java.io :only [input-stream]])
   )
 
 ;; TODO: add separate function to extract only meta-data
 
-(def ^{:private true} tika-class (Tika.))
+(def ^Tika ^{:private true} tika-class (Tika.))
 
 (defn conv-metadata [^Metadata mdata]
   (let [names (.names mdata)]
@@ -38,21 +39,21 @@
            (.parse parser ifile handler metadata context)
            (assoc (conv-metadata metadata) :text (.toString handler))))
   (detect-mime-type [^InputStream ifile]
-                    (.detect tika-class ifile)))
+                    (.detect tika-class (TikaInputStream/get ifile))))
 
 (extend-protocol TikaProtocol
   java.io.File
-  (parse [^File file] (with-open [is (input-stream file)] (parse is)))
+  (parse [^File file] (with-open [is (TikaInputStream/get (input-stream file))] (parse is)))
   (detect-mime-type [^File file] (.detect tika-class file)))
 
 (extend-protocol TikaProtocol
   String
-  (parse [^String filename] (with-open [is (input-stream filename)] (parse is)))
+  (parse [^String filename] (with-open [is (TikaInputStream/get (input-stream filename))] (parse is)))
   (detect-mime-type [^String filename] (.detect tika-class filename)))
 
 (extend-protocol TikaProtocol
   URL
-  (parse [^URL url] (with-open [is (input-stream url)] (parse is)))
+  (parse [^URL url] (with-open [is (TikaInputStream/get (input-stream url))] (parse is)))
   (detect-mime-type [^URL url] (.detect tika-class url)))
 
 (defn detect-language
