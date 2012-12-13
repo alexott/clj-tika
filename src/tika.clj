@@ -39,7 +39,8 @@
            (.parse parser ifile handler metadata context)
            (assoc (conv-metadata metadata) :text (.toString handler))))
   (detect-mime-type [^InputStream ifile]
-                    (.detect tika-class (TikaInputStream/get ifile))))
+    (with-open [in (TikaInputStream/get ifile)]
+      (.detect tika-class in))))
 
 (extend-protocol TikaProtocol
   java.io.File
