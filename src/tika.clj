@@ -37,7 +37,7 @@
                ]
            (.set context Parser parser)
            (.parse parser ifile handler metadata context)
-           (assoc (conv-metadata metadata) :text (.toString handler))))
+           (assoc (conv-metadata metadata) :text (str handler))))
   (detect-mime-type [^InputStream ifile]
     (with-open [in (TikaInputStream/get ifile)]
       (.detect tika-class in))))
