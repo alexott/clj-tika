@@ -1,4 +1,4 @@
-(defproject org.clojars.floriano.clj-tika "1.2.3"
+(defproject org.clojars.floriano.clj-tika "1.2.4"
   :description "Clojure bindings to Apache Tika"
   :url "https://github.com/FlorianO/clj-tika"
   :license {:name "Eclipse Public License - v 1.0"
@@ -6,5 +6,5 @@
             :distribution :repo
             :comments "same as Clojure"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [org.apache.tika/tika-parsers "1.3"]]
+                 [org.apache.tika/tika-parsers "1.4"]]
   )
