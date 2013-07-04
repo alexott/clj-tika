@@ -1,3 +1,9 @@
+This project is deprecated in favor of
+[Pantomime](https://github.com/michaelklishin/pantomime).  Please use it for your future
+projects.
+
+Thank you!
+
 # clj-tika
 
 Clojure interface to Apache Tika project functions
