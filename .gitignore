@@ -5,3 +5,5 @@ lib/
 /.lein-failures
 /*.jar
 /pom.xml
+target/
+.DS_Store
